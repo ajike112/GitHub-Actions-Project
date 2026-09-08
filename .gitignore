@@ -1,12 +1,19 @@
-.terraform/
+# Terraform
 *.tfstate
 *.tfstate.*
-.terraform.lock.hcl
 .terraform/
-*.tfstate
-*.tfstate.*
 .terraform.lock.hcl
-.terraform/
-*.tfstate
-*.tfstate.*
-.terraform.lock.hcl
+
+# Crash logs
+crash.log
+
+# Ignore local override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Ignore plan files
+*.plan
+plan.out
+
