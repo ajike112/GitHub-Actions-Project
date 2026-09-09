@@ -17,11 +17,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Debug OIDC token
+        shell: bash
         run: |
           echo "Fetching OIDC token..."
           TOKEN=$(curl -s "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sts.amazonaws.com" \
            -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN")
           echo "$TOKEN" | jq -R 'split(".") | .[1] | @base64d' > oidc.json
+          echo "Decoded OIDC token:"
           cat oidc.json
 
 
