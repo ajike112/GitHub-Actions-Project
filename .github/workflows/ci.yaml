@@ -16,6 +16,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Debug OIDC token
+        run: |
+          echo "Fetching OIDC token..."
+          TOKEN=$(curl -s "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sts.amazonaws.com" \
+           -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN")
+          echo "$TOKEN" | jq -R 'split(".") | .[1] | @base64d' > oidc.json
+          cat oidc.json
+
+
       - name: Configure AWS Credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -39,7 +48,7 @@ jobs:
       - name: Push Image to ECR
         run: |
           docker push ${{ secrets.ECR_REPO }}:latest
-          
+
       - name: Update Helm values with new image tag
         run: |
           NEW_TAG=$(date +%s)
