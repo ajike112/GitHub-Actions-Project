@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Debug OIDC token
-        id: oidc
+        shell: bash
         run: |
           echo "Requesting OIDC token..."
           TOKEN=$(curl -s \
