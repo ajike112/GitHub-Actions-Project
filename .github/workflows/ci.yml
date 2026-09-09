@@ -38,6 +38,10 @@ jobs:
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Debug ECR_REPO secret
+        run: |
+          echo "[$ECR_REPO]"
+
       - name: Build Docker Image
         run: |
           docker build -t "${{ secrets.ECR_REPO }}:latest" .
