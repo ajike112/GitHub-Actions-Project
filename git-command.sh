@@ -5,6 +5,6 @@ echo "Add files and do local commit"
 git add .
 echo "checking status"
 git status
-git commit -am "Fixing the secret for the Docker build step"
+git commit -am "Added environment variable for the ECR_REPO secret for the Docker build step"
 echo "Pushing to Github Repository"
 git push -u origin master
