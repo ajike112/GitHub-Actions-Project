@@ -40,7 +40,7 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build -t ${{ secrets.ECR_REPO }}:latest .
+          docker build -t "${{ secrets.ECR_REPO }}:latest" .
 
       - name: Scan Image with Trivy
         uses: aquasecurity/trivy-action@master
@@ -51,7 +51,7 @@ jobs:
 
       - name: Push Image to ECR
         run: |
-          docker push ${{ secrets.ECR_REPO }}:latest
+          docker push "${{ secrets.ECR_REPO }}:latest"
 
       - name: Update Helm values with new image tag
         run: |
