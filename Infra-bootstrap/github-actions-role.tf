@@ -16,8 +16,9 @@ resource "aws_iam_role" "github_actions" {
       }
       Action = "sts:AssumeRoleWithWebIdentity"
       Condition = {
-        StringLike = {
-          "token.actions.githubusercontent.com:sub" = "repo:ajike112/GitHub-Actions-Project:ref:refs/heads/master"
+        StringEquals = {
+          "token.actions.githubusercontent.com:sub" = "repo:ajike112/GitHub-Actions-Project:ref:refs/heads/master",
+          "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
         }
       }
     }]
