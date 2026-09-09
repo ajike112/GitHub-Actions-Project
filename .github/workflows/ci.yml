@@ -65,4 +65,3 @@ jobs:
           git add helm/nodejs-app/values.yaml
           git commit -m "Update image tag to $NEW_TAG"
           git push
-
