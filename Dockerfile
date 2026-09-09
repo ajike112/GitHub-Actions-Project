@@ -6,13 +6,13 @@ FROM node:18-slim AS builder
 WORKDIR /usr/src/app
 
 # Copy dependency manifests from the app folder
-COPY Node.js\ app/app/package*.json ./
+COPY nodejs-app/app/package*.json ./
 
 # Install dependencies
 RUN npm ci
 
 # Copy full source from the app folder
-COPY Node.js\ app/app/. 
+COPY nodejs-app/app/. .
 
 RUN echo "Build stage complete"
 
