@@ -33,6 +33,7 @@ jobs:
         with:
           role-to-assume: ${{ secrets.AWS_GITHUB_ACTIONS_ROLE_ARN }}
           aws-region: us-east-1
+          audience: sts.amazonaws.com
 
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
@@ -64,3 +65,4 @@ jobs:
           git add helm/nodejs-app/values.yaml
           git commit -m "Update image tag to $NEW_TAG"
           git push
+
