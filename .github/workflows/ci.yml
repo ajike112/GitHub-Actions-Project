@@ -1,0 +1,66 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: ["master"]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-scan-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Debug OIDC token
+        shell: bash
+        run: |
+          echo "Requesting OIDC token..."
+          TOKEN=$(curl -s \
+            -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sts.amazonaws.com")
+          echo "$TOKEN" > raw.txt
+          echo "$TOKEN" | jq -R 'split(".") | .[1] | @base64d' > oidc.json
+          echo "Decoded OIDC token:"
+          cat oidc.json
+
+      - name: Configure AWS Credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_GITHUB_ACTIONS_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build Docker Image
+        run: |
+          docker build -t ${{ secrets.ECR_REPO }}:latest .
+
+      - name: Scan Image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ secrets.ECR_REPO }}:latest
+          format: table
+          exit-code: 0
+
+      - name: Push Image to ECR
+        run: |
+          docker push ${{ secrets.ECR_REPO }}:latest
+
+      - name: Update Helm values with new image tag
+        run: |
+          NEW_TAG=$(date +%s)
+          sed -i "s/tag: .*/tag: \"$NEW_TAG\"/" helm/nodejs-app/values.yaml
+
+      - name: Commit updated Helm values
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add helm/nodejs-app/values.yaml
+          git commit -m "Update image tag to $NEW_TAG"
+          git push
