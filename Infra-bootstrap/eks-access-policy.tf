@@ -8,17 +8,35 @@
 # ============================================
 resource "aws_iam_policy" "eks_access" {
   name        = "github-actions-eks-access"
-  description = "Allow GitHub Actions to interact with EKS"
+  description = "Allow GitHub Actions to interact with EKS and ECR"
 
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
+      # --- EKS ACCESS ---
       {
         Effect = "Allow"
         Action = [
           "eks:DescribeCluster",
           "eks:ListClusters",
-          "eks:AccessKubernetesApi",
+          "eks:AccessKubernetesApi"
+        ]
+        Resource = "*"
+      },
+
+      # --- ECR LOGIN (GetAuthorizationToken) ---
+      {
+        Effect = "Allow"
+        Action = [
+          "ecr:GetAuthorizationToken"
+        ]
+        Resource = "*"
+      },
+
+      # --- ECR IMAGE PUSH/PULL ---
+      {
+        Effect = "Allow"
+        Action = [
           "ecr:BatchGetImage",
           "ecr:GetDownloadUrlForLayer",
           "ecr:PutImage",
@@ -26,10 +44,10 @@ resource "aws_iam_policy" "eks_access" {
           "ecr:UploadLayerPart",
           "ecr:CompleteLayerUpload",
           "ecr:DescribeRepositories",
-          "ecr:DescribeImages"
+          "ecr:DescribeImages",
+          "ecr:ListImages"
         ]
-        Resource = "*"
-        Resource : "arn:aws:ecr:us-east-1:536697262404:repository/*"
+        Resource = "arn:aws:ecr:us-east-1:536697262404:repository/*"
       }
     ]
   })
