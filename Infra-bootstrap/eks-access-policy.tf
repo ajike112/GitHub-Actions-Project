@@ -18,9 +18,18 @@ resource "aws_iam_policy" "eks_access" {
         Action = [
           "eks:DescribeCluster",
           "eks:ListClusters",
-          "eks:AccessKubernetesApi"
+          "eks:AccessKubernetesApi",
+          "ecr:BatchGetImage",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:PutImage",
+          "ecr:InitiateLayerUpload",
+          "ecr:UploadLayerPart",
+          "ecr:CompleteLayerUpload",
+          "ecr:DescribeRepositories",
+          "ecr:DescribeImages"
         ]
         Resource = "*"
+        Resource : "arn:aws:ecr:us-east-1:536697262404:repository/*"
       }
     ]
   })
