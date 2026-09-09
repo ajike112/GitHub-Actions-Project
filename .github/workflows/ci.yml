@@ -46,8 +46,11 @@ jobs:
           echo "[$ECR_REPO]"
 
       - name: Build Docker Image
+        env:
+          ECR_REPO: ${{ secrets.ECR_REPO }}
         run: |
-          docker build -t "${{ secrets.ECR_REPO }}:latest" .
+          docker build -t "${ECR_REPO}:latest" .
+
 
       - name: Scan Image with Trivy
         uses: aquasecurity/trivy-action@master
@@ -57,8 +60,11 @@ jobs:
           exit-code: 0
 
       - name: Push Image to ECR
+        env:
+          ECR_REPO: ${{ secrets.ECR_REPO }}
         run: |
-          docker push "${{ secrets.ECR_REPO }}:latest"
+          docker push "${ECR_REPO}:latest"
+
 
       - name: Update Helm values with new image tag
         run: |
