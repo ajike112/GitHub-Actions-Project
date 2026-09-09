@@ -1,0 +1,47 @@
+##############################
+# Stage 1 — Build environment
+##############################
+FROM node:18-slim AS builder
+
+WORKDIR /usr/src/app
+
+# Copy dependency manifests from the app folder
+COPY Node.js\ app/app/package*.json ./
+
+# Install dependencies
+RUN npm ci
+
+# Copy full source from the app folder
+COPY Node.js\ app/app/. 
+
+RUN echo "Build stage complete"
+
+
+##############################
+# Stage 2 — Production image
+##############################
+FROM node:18-slim AS production
+
+# Create non-root user (Debian/Ubuntu syntax)
+RUN groupadd -r appgroup && useradd -r -g appgroup appuser
+
+WORKDIR /usr/src/app
+
+# Copy only necessary files from builder
+COPY --from=builder /usr/src/app/package.json ./
+COPY --from=builder /usr/src/app/node_modules ./node_modules
+COPY --from=builder /usr/src/app/server.js ./server.js
+COPY --from=builder /usr/src/app/routes ./routes
+COPY --from=builder /usr/src/app/public ./public
+
+ENV NODE_ENV=production \
+    PORT=3000
+
+EXPOSE 3000
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD wget -qO- http://localhost:3000/ || exit 1
+
+USER appuser
+
+CMD ["node", "server.js"]

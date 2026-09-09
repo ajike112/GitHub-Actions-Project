@@ -5,6 +5,6 @@ echo "Add files and do local commit"
 git add .
 echo "checking status"
 git status
-git commit -am "Adding GitHub Actions workflows"
+git commit -am "Adding GitHub Actions workflows, helm, application codes and manifests"
 echo "Pushing to Github Repository"
 git push -u origin master
