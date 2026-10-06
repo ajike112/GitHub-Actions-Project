@@ -37,6 +37,7 @@ resource "aws_iam_policy" "eks_access" {
       {
         Effect = "Allow"
         Action = [
+          "ecr:BatchCheckLayerAvailability",
           "ecr:BatchGetImage",
           "ecr:GetDownloadUrlForLayer",
           "ecr:PutImage",
