@@ -11,3 +11,23 @@ resource "aws_ecr_repository" "nodejs_app" {
     scan_on_push = true
   }
 }
+
+# Keep only the 10 most recent images so storage doesn't grow with every push
+resource "aws_ecr_lifecycle_policy" "nodejs_app" {
+  repository = aws_ecr_repository.nodejs_app.name
+
+  policy = jsonencode({
+    rules = [{
+      rulePriority = 1
+      description  = "Keep last 10 images"
+      selection = {
+        tagStatus   = "any"
+        countType   = "imageCountMoreThan"
+        countNumber = 10
+      }
+      action = {
+        type = "expire"
+      }
+    }]
+  })
+}
