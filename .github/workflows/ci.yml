@@ -14,7 +14,6 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      ECR_REPO: ${{ secrets.ECR_REPO }}
       IMAGE_TAG: ${{ github.sha }}
 
     steps:
@@ -29,7 +28,11 @@ jobs:
           audience: sts.amazonaws.com
 
       - name: Login to Amazon ECR
+        id: ecr
         uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set image repository
+        run: echo "ECR_REPO=${{ steps.ecr.outputs.registry }}/nodejs-app" >> "$GITHUB_ENV"
 
       - name: Build Docker Image
         run: |
