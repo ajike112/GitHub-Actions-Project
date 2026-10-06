@@ -2,7 +2,7 @@ replicaCount: 2
 
 image:
   repository: 536697262404.dkr.ecr.us-east-1.amazonaws.com/nodejs-app
-  tag: "a15129a0513de553fa8ec4d75efdb00042b67b04"
+  tag: "5d07ab94297354d6d080216e99e29ed4a0364496"
   pullPolicy: IfNotPresent
 
 service:
